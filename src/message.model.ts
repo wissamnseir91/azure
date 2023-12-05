@@ -1,8 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+export interface IMessage extends Document {
+  type: string;
+  message: string;
+}
+
 @Schema()
-export class Message extends Document {
+export class Message {
   @Prop({ required: true }) // Example: Adding required constraint
   type: string;
 

@@ -1,15 +1,22 @@
 import { ServiceBusClient, ServiceBusMessage, delay } from '@azure/service-bus';
 import { Injectable } from '@nestjs/common';
-import { Message } from 'src/message.model';
+import { IMessage, Message, MessageSchema } from 'src/message.model';
 import { MessageService } from 'src/message.service';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 @Injectable()
 export class ServiceBusService {
   private serviceBusClient: ServiceBusClient;
-  constructor(private readonly messageService: MessageService) {
+  constructor(
+    private readonly messageService: MessageService,
+    @InjectModel(Message.name) private messageModel: Model<IMessage>,
+  ) {
     // constructor() {
     this.serviceBusClient = new ServiceBusClient(
-      'Endpoint=sb://wissambus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=cmSioAE0wFTM1jzdOr/+RDsuIZGJbG4rr+ASbOGN/CI=',
+      process.env.SERVICE_BUS,
     );
   }
   async sendMessage(queueName: string, body: string): Promise<void> {
@@ -30,7 +37,7 @@ export class ServiceBusService {
 
     const myMessageHandler = async (messageReceived) => {
       console.log(`Received message: ${messageReceived.body}`);
-      const newMessage = new Message({
+      const newMessage = new this.messageModel({
         type: queueName,
         message: messageReceived.body,
       });

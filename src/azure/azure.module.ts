@@ -3,11 +3,15 @@ import { AzureService } from './azure.service';
 import { ServiceBusService } from './service-bus/service-bus.service';
 import { MessageService } from 'src/message.service';
 import { MessageModule } from 'src/message.module';
-import { Message } from 'src/message.model';
+import { Message, MessageSchema } from 'src/message.model';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [MessageModule],
-  providers: [AzureService, ServiceBusService, MessageService, Message],
+  imports: [
+    MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
+    MessageModule,
+  ],
+  providers: [AzureService, ServiceBusService, MessageService],
   exports: [AzureService, ServiceBusService],
 })
 export class AzureModule {}

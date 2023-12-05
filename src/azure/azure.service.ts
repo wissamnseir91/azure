@@ -1,7 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventHubConsumerClient } from '@azure/event-hubs';
 import { ServiceBusService } from './service-bus/service-bus.service';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 @Injectable()
 export class AzureService implements OnModuleInit {
   private consumerClient: EventHubConsumerClient;
@@ -9,7 +11,7 @@ export class AzureService implements OnModuleInit {
   constructor(private readonly serviceBusService: ServiceBusService) {
     this.consumerClient = new EventHubConsumerClient(
       '$Default',
-      'Endpoint=sb://wissam.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=L8GkMCy79uvNKZuSKWB9SvVKg6lZyrrhs+AEhECA/MY=',
+      process.env.EVENT_HUB,
       'wissameventhub',
     );
   }
